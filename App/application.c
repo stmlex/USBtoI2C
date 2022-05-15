@@ -31,10 +31,11 @@ void ReadCommandBuf(void)
 void indication(void)
 {
     static uint32_t prev_tick = 0;
-    if (HAL_GetTick() > (prev_tick + SYSTEM_LED_BLINK_PEROD))
+    uint32_t current_tick = HAL_GetTick();
+    if (current_tick > (prev_tick + SYSTEM_LED_BLINK_PEROD))
     {
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-        prev_tick = HAL_GetTick();
+        prev_tick = current_tick;
     }
 }
 
