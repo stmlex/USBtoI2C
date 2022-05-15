@@ -1,5 +1,6 @@
 #include "main.h"
 #include "application.h"
+#include "log_libs.h"
 void application(void)
 {
     while (1)

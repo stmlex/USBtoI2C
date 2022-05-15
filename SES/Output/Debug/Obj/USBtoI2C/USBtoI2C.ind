@@ -37,5 +37,8 @@
 "Output/Debug/Obj/USBtoI2C/usbd_desc.o"
 "Output/Debug/Obj/USBtoI2C/usbd_conf.o"
 "Output/Debug/Obj/USBtoI2C/application.o"
+"Output/Debug/Obj/USBtoI2C/SEGGER_RTT.o"
+"Output/Debug/Obj/USBtoI2C/log_libs.o"
 "C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 5.62/segger-rtl/libs/libc_v7em_fpv4_sp_d16_hard_t_le_eabi_balanced.a"
 "C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 5.62/lib/SEGGER_crtinit_v7em_little.o"
+"C:/Program Files/SEGGER/SEGGER Embedded Studio for ARM 5.62/lib/libcxxabi_noexcept_v7em_fpv4_sp_d16_hard_t_le_eabi.a"
