@@ -1,0 +1,3 @@
+[submodule "ks2_libs"]
+	path = ks2_libs
+	url = git@git.ks2.co:firmware/ks2_libs.git
