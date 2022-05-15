@@ -12,22 +12,19 @@ void LogLibsPrintCustom(char *buff, int n)
 
 void ReadCommandBuf(void)
 {
-    static char buff[32];
+    static char buff[READ_COMMAND_BUF_LEN];
     static uint8_t pos = 0;
     int32_t key = LogLibsGetChar();
     if (key < 0)
     {
-        // continue;
         return;
     }
     if ((char)key == '\n')
     {
         if (pos == 0)
-            // continue;
             return;
         buff[pos] = '\0';
-        pos = 0;
-        // new string
+        pos = 0; // new string
     }
     else if (pos < (sizeof(buff) - 1))
     {
