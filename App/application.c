@@ -2,6 +2,13 @@
 #include "application.h"
 #include "log_libs.h"
 #include "config.h"
+#include "usbd_cdc_if.h"
+
+extern USBD_HandleTypeDef hUsbDeviceFS;
+void LogLibsPrintCustom(char *buff, int n)
+{
+    CDC_Transmit_FS((uint8_t*)buff, n);
+}
 
 void ReadCommandBuf(void)
 {
@@ -35,6 +42,7 @@ void indication(void)
     if (current_tick > (prev_tick + SYSTEM_LED_BLINK_PEROD))
     {
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        LOG_INFO("blink");
         prev_tick = current_tick;
     }
 }
