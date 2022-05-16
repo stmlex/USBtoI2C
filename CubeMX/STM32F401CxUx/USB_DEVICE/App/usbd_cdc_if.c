@@ -23,7 +23,7 @@
 #include "usbd_cdc_if.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "log_libs.h"
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -178,6 +178,7 @@ static int8_t CDC_DeInit_FS(void)
   * @param  length: Number of data to be sent (in bytes)
   * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
   */
+
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
   /* USER CODE BEGIN 5 */
@@ -220,12 +221,14 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /*                                        4 - Space                            */
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
+    static uint8_t lineCoding[7] // 115200bps, 1stop, no parity, 8bit
+        = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
     case CDC_SET_LINE_CODING:
-
+        memcpy(lineCoding, pbuf, sizeof(lineCoding));
     break;
 
     case CDC_GET_LINE_CODING:
-
+        memcpy(pbuf, lineCoding, sizeof(lineCoding));
     break;
 
     case CDC_SET_CONTROL_LINE_STATE:
@@ -263,6 +266,9 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
+  for (uint32_t cnt = 0; cnt < *Len; cnt++){
+    LogLibsCharReceiveFromISR(Buf[cnt]);
+  }
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
   /* USER CODE END 6 */
