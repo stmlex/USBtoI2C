@@ -4,39 +4,15 @@
 #include "config.h"
 #include "usbd_cdc_if.h"
 #include "stdbool.h"
+#include "cli_handle.h"
 
-extern USBD_HandleTypeDef hUsbDeviceFS;
 void LogLibsPrintCustom(char *buff, int n)
 {
     CDC_Transmit_FS((uint8_t*)buff, n);
 }
 
-bool ParseCommand(char *buf, size_t len) {
-    LOG_RAW_INFO(buf);
-    return true;
-}
-
-void ReadCommandBuf(void)
-{
-    static char buff[READ_COMMAND_BUF_LEN];
-    static uint8_t pos = 0;
-    int32_t key = LogLibsGetChar();
-    if (key < 0)
-    {
-        return;
-    }
-    if ((char)key == '\n')
-    {
-        if (pos == 0)
-            return;
-        buff[pos] = '\0';
-        ParseCommand(buff, pos);
-        pos = 0; // new string
-    }
-    else if (pos < (sizeof(buff) - 1))
-    {
-        buff[pos++] = key;
-    }
+void LED_set(bool state){
+    state ? HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET) : HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 }
 
 void Indication(void)
@@ -54,7 +30,7 @@ void application(void)
 {
     while (1)
     {
-        ReadCommandBuf();
-        Indication();
+        CliReadTaskFunc();
+        // Indication();
     }
 }
