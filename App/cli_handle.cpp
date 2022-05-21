@@ -17,6 +17,24 @@
 #include "log_libs.h"
 
 static void ShellHelpCmd(void);
+static void Print_HAL_err(HAL_StatusTypeDef err)
+{
+    switch (err)
+    {
+    case HAL_OK:
+        LOG_INFO("OK");
+        break;
+    case HAL_ERROR:
+        LOG_INFO("ERROR");
+        break;
+    case HAL_BUSY:
+        LOG_INFO("BUSY");
+        break;
+    case HAL_TIMEOUT:
+        LOG_INFO("TIMEOUT");
+        break;
+    }
+}
 
 static const textToCmd_t textToCmdList[] =
     {
@@ -25,16 +43,32 @@ static const textToCmd_t textToCmdList[] =
         {"-led", "[on/off] led ctrl", [](const char *text) -> bool
          {
              bool result = false;
-             if(strstr(text, "on")){
+             if (strstr(text, "on"))
+             {
                  LED_set(true);
                  result = true;
              }
-             else if(strstr(text, "off")){
+             else if (strstr(text, "off"))
+             {
                  LED_set(false);
                  result = true;
              }
              return result;
-         }}};
+         }},
+        {"-r", "[addr],[size] read i2c registers", [](const char *text) -> bool
+         { 
+            uint16_t DevAddress;
+            uint8_t data[I2C_MAX_DATA_SIZE];
+            uint16_t Size;
+            uint32_t Timeout = 1000;
+            HAL_StatusTypeDef err;
+
+            err = HAL_I2C_Master_Receive(&I2C_INSTANSE, DevAddress, data, Size, Timeout);
+            if (err != HAL_OK) {
+                Print_HAL_err(err);
+            }
+            return true; }},
+};
 
 void CliReadTaskFunc(void)
 {
