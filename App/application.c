@@ -11,6 +11,10 @@ void LogLibsPrintCustom(char *buff, int n)
     CDC_Transmit_FS((uint8_t*)buff, n);
 }
 
+void LED_set(bool state){
+    state ? HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET) : HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+}
+
 void Indication(void)
 {
     static uint32_t prev_tick = 0;
@@ -27,6 +31,6 @@ void application(void)
     while (1)
     {
         CliReadTaskFunc();
-        Indication();
+        // Indication();
     }
 }

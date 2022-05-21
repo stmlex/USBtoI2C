@@ -22,15 +22,24 @@ static const textToCmd_t textToCmdList[] =
     {
         {"-h", "Print this help", [](const char *text) -> bool
          { ShellHelpCmd(); return true; }},
-        {"-adc", "print all adc", [](const char *text) -> bool
+        {"-led", "[on/off] led ctrl", [](const char *text) -> bool
          {
-             return true;
+             bool result = false;
+             if(strstr(text, "on")){
+                 LED_set(true);
+                 result = true;
+             }
+             else if(strstr(text, "off")){
+                 LED_set(false);
+                 result = true;
+             }
+             return result;
          }}};
 
 void CliReadTaskFunc(void)
 {
     static char buff[32] = {0};
-    uint8_t pos = 0;
+    static uint8_t pos = 0;
 
     // for (;;)
     // {
