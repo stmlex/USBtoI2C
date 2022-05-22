@@ -6,9 +6,21 @@
 #include "stdbool.h"
 #include "cli_handle.h"
 
+bool host_com_port_open = false;
+
 void LogLibsPrintCustom(char *buff, int n)
 {
-    CDC_Transmit_FS((uint8_t *)buff, n);
+    if (!host_com_port_open) {
+        return;
+    }
+    uint32_t attempts = 0;
+    while (attempts++ < CDC_TRANSMIT_ATTEMPTS)
+    {
+        if (CDC_Transmit_FS((uint8_t *)buff, n) == USBD_OK)
+        {
+            return;
+        }
+    }
 }
 
 void LED_set(bool state)
