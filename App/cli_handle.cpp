@@ -62,7 +62,7 @@ static const textToCmd_t textToCmdList[] =
             uint16_t DevAddress;
             uint16_t MemAddress;
             uint16_t MemAddSize;
-            static uint8_t data[I2C_MAX_DATA_SIZE];
+            uint8_t data[I2C_MAX_DATA_SIZE];
             uint16_t Size;
             uint32_t Timeout = 1000;
             HAL_StatusTypeDef err;
@@ -83,7 +83,7 @@ static const textToCmd_t textToCmdList[] =
             uint16_t DevAddress;
             uint16_t MemAddress;
             uint16_t MemAddSize;
-            static uint8_t data[I2C_MAX_DATA_SIZE];
+            uint8_t data[I2C_MAX_DATA_SIZE];
             uint16_t Size;
             uint32_t Timeout = 1000;
             HAL_StatusTypeDef err;
@@ -94,6 +94,25 @@ static const textToCmd_t textToCmdList[] =
             DevAddress = DevAddress << 1; // must be shifted to the left before calling the interface
             err = HAL_I2C_Mem_Write(&I2C_INSTANSE, DevAddress, MemAddress, MemAddSize, data, 1, Timeout);
             Print_HAL_err(err);
+            return true; }},
+        {"-s", "[Trials] [Timeout] scan i2c bus", [](const char *text) -> bool
+         { 
+             uint32_t Trials;
+             uint32_t Timeout;
+             uint8_t data[I2C_MAX_DATA_SIZE];
+             int data_index = 0;
+             int sscanf_res = sscanf(text, "%d %d", &Trials, &Timeout);
+             if(sscanf_res < 2) {
+                return false;
+            }
+            for (uint16_t addr = 0; addr <= 0xff; ++addr) {
+                if (HAL_I2C_IsDeviceReady(&I2C_INSTANSE, (addr << 1), Trials, Timeout) == HAL_OK){
+                    data[data_index++] = addr;
+                }
+            }
+            if (data_index) {
+                LOG_HEXDUMP_INFO(data, data_index);
+            }
             return true; }},
 };
 

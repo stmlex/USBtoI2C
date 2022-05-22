@@ -14,6 +14,6 @@
 #define LOG_LIBS_RX_BUFFER_SIZE 0x400
 
 #define I2C_INSTANSE (hi2c1)
-#define I2C_MAX_DATA_SIZE 200
+#define I2C_MAX_DATA_SIZE 0xff
 
 #endif // !CONFIG_H
