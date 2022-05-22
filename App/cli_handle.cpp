@@ -38,6 +38,15 @@ static void Print_HAL_err(HAL_StatusTypeDef err)
     LOG_RAW_INFO("\r\n");
 }
 
+static void Print_hex_array(uint8_t *data, size_t size)
+{
+    for (int i = 0; i < size; ++i)
+    {
+        LOG_RAW_INFO("%x ", data[i]);
+    }
+    LOG_RAW_INFO("\r\n");
+}
+
 static const textToCmd_t textToCmdList[] =
     {
         {"-h", "Print this help", [](const char *text) -> bool
@@ -73,7 +82,8 @@ static const textToCmd_t textToCmdList[] =
             DevAddress = DevAddress << 1; // must be shifted to the left before calling the interface
             err = HAL_I2C_Mem_Read(&I2C_INSTANSE, DevAddress, MemAddress, MemAddSize, data, Size, Timeout);
             if (err == HAL_OK) {
-                LOG_HEXDUMP_INFO(data, Size);
+                // LOG_HEXDUMP_INFO(data, Size);
+                Print_hex_array(data, Size);
             }else {
                 Print_HAL_err(err);
             }
@@ -111,7 +121,11 @@ static const textToCmd_t textToCmdList[] =
                 }
             }
             if (data_index) {
-                LOG_HEXDUMP_INFO(data, data_index);
+                // LOG_HEXDUMP_INFO(data, data_index);
+                Print_hex_array(data, data_index);
+            }
+            else {
+                LOG_RAW_INFO("not found!\r\n");
             }
             return true; }},
 };
@@ -120,9 +134,6 @@ void CliReadTaskFunc(void)
 {
     static char buff[READ_COMMAND_BUF_LEN] = {0};
     static uint8_t pos = 0;
-
-    // for (;;)
-    // {
     int8_t key = LogLibsGetChar();
     if (key > 0)
     {
@@ -141,8 +152,6 @@ void CliReadTaskFunc(void)
             buff[pos++] = key;
         }
     }
-    // vTaskDelay(100);
-    // }
 }
 
 /**
